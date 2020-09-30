@@ -59,4 +59,10 @@ public class TradeStore {
 		this.trades = trades;
 	}
 
+	public List<Trade> find(String tradeId) {
+		return this.getTrades().stream()
+				.filter(item -> item.getId().equalsIgnoreCase(tradeId)).collect(Collectors.toList());
+		
+	}
+
 }

@@ -6,6 +6,8 @@ package com.trade;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -129,4 +131,34 @@ public class TradeExecutorTest {
 		assertEquals(4, classUnderTest.getTradeStore().getTrades().size());
 		assertEquals(new Integer(2), classUnderTest.getTradeStore().getTrades().get(1).getVersion());
 	}
+	
+	
+		@Test
+		public void testGetAllTrades() throws Exception {
+			final TradeExecutor classUnderTest = new TradeExecutor();
+			final TradeStore store = new TradeStore();
+			classUnderTest.setTradeStore(store);
+
+			final Trade trade1 = new Trade("T1", 1, "CP-1", "B1", DateTimeUtils.getDate("20-05-2021"),
+					DateTimeUtils.getDate("29-09-2020"), 'N');
+			final Trade trade2 = new Trade("T2", 1, "CP-1", "B1", DateTimeUtils.getDate("20-05-2021"),
+					DateTimeUtils.getDate("29-09-2020"), 'N');
+			final Trade trade3 = new Trade("T3", 3, "CP-3", "B2", DateTimeUtils.getDate("20-05-2021"),
+					DateTimeUtils.getDate("29-09-2020"), 'Y');
+			final Trade trade4 = new Trade("T2", 2, "CP-2", "B1", DateTimeUtils.getDate("20-05-2021"),
+					DateTimeUtils.getDate("29-09-2020"), 'N');
+
+			assertTrue("Add should return 'true'", classUnderTest.add(trade1));
+			assertTrue("Add should return 'true'", classUnderTest.add(trade2));
+			assertTrue("Add should return 'true'", classUnderTest.add(trade3));
+			assertTrue("Add should return 'true'", classUnderTest.add(trade4));
+			
+			final String tradeId = "T2";
+			final List<Trade> actual = classUnderTest.find(tradeId);
+			
+			assertEquals(2, actual.size());
+			
+			
+			
+		}
 }

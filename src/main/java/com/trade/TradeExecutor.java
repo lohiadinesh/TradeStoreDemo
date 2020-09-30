@@ -1,5 +1,6 @@
 package com.trade;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,7 @@ public class TradeExecutor implements ITrade {
 	public boolean add(final Trade trade) throws IllegalArgumentException {
 		if (this.validate(trade)) {
 			final Stream<Trade> trades = this.getTradeStore().getTrades().stream()
-					.filter(item -> item.getId().equalsIgnoreCase(trade.getId())
-							&& item.getBookId().equalsIgnoreCase(trade.getBookId())
-							&& item.getcPartyId().equalsIgnoreCase(trade.getcPartyId()));
+					.filter(item -> item.getId().equalsIgnoreCase(trade.getId()) && item.getVersion() == trade.getVersion());
 			if (trades.count() == 0)
 				return this.tradeStore.add(trade);
 			return updateTrade(trade);
@@ -62,8 +61,6 @@ public class TradeExecutor implements ITrade {
 	private void isValidVersion(final Trade trade) throws IllegalArgumentException {
 		final Stream<Trade> invalidVersions = this.getTradeStore().getTrades().stream()
 				.filter(item -> item.getId().equalsIgnoreCase(trade.getId())
-						&& item.getBookId().equalsIgnoreCase(trade.getBookId())
-						&& item.getcPartyId().equalsIgnoreCase(trade.getcPartyId())
 						&& item.getVersion() > trade.getVersion());
 		if (invalidVersions.count() > 0)
 			throw new IllegalArgumentException("New version can not be lower than current version.");
@@ -99,12 +96,15 @@ public class TradeExecutor implements ITrade {
 
 	private boolean updateTrade(final Trade trade) {
 		final Stream<Trade> trades = this.getTradeStore().getTrades().stream()
-				.filter(item -> item.getId().equalsIgnoreCase(trade.getId())
-						&& item.getBookId().equalsIgnoreCase(trade.getBookId())
-						&& item.getcPartyId().equalsIgnoreCase(trade.getcPartyId()));
+				.filter(item -> item.getId().equalsIgnoreCase(trade.getId()) && item.getVersion() == trade.getVersion());
 		trades.forEachOrdered(item -> item.setmDate(trade.getmDate()));
 		return true;
 
+	}
+
+	@Override
+	public List<Trade> find(String tradeId) {
+		return this.getTradeStore().find(tradeId);
 	}
 
 }
